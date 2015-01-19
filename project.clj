@@ -1,4 +1,4 @@
-(defproject circleci "0.1.0-SNAPSHOT"
+(defproject kgann/circleci "0.1.0"
   :description "Interface to the CircleCI REST API"
   :url "https://github.com/kgann/circleci"
   :license {:name "Eclipse Public License"

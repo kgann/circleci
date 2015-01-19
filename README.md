@@ -10,7 +10,7 @@ See the generated API documentation for all available namespaces and their fn's.
 
 Add the following dependency to your `project.clj` file for the latest release:
 
-    [circleci "0.1.0"]
+    [kgann/circleci "0.1.0"]
 
 ## Documentaion
 
