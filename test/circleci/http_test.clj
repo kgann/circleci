@@ -25,35 +25,36 @@
 (deftest http-request
   (with-fake-http [(constantly true) "{}"]
     (testing "details"
-      (is (= {:opts
-              {:method :get,
-               :url "https://circleci.com/api/v1/foo/",
-               :query-string {:circle-token "123", :param "bar"}},
-              :status 200,
-              :headers {:server "org.httpkit.fake", :content-type "text/html"}}
+      (is (= {:opts {:method :get
+                     :url "https://circleci.com/api/v1/foo"
+                     :query-params {:circle-token "123" :param "bar"}
+                     :headers {"Accept" "application/json"}}
+             :status 200
+             :headers {:server "org.httpkit.fake"
+                       :content-type "text/html"}}
              (details (get-test :token "123" :param "bar")))))
 
     (testing "GET"
       (let [resp (details (get-test :token "123" :param "bar"))]
         (testing "url"
-          (is (= "https://circleci.com/api/v1/foo/" (get-in resp [:opts :url]))))
+          (is (= "https://circleci.com/api/v1/foo" (get-in resp [:opts :url]))))
 
         (testing "method"
           (is (= :get (get-in resp [:opts :method]))))
 
-        (testing "query-string"
-          (is (= {:circle-token "123" :param "bar"} (get-in resp [:opts :query-string]))))))
+        (testing "query-params"
+          (is (= {:circle-token "123" :param "bar"} (get-in resp [:opts :query-params]))))))
 
     (testing "POST"
       (let [resp (details (post-test :token "123" :param "bar"))]
         (testing "url"
-          (is (= "https://circleci.com/api/v1/foo/" (get-in resp [:opts :url]))))
+          (is (= "https://circleci.com/api/v1/foo" (get-in resp [:opts :url]))))
 
         (testing "method"
           (is (= :post (get-in resp [:opts :method]))))
 
-        (testing "query-string"
-          (is (= {:circle-token "123"} (get-in resp [:opts :query-string]))))
+        (testing "query-params"
+          (is (= {:circle-token "123"} (get-in resp [:opts :query-params]))))
 
         (testing "JSON serialized body"
           (is (= "{\"param\":\"bar\"}" (get-in resp [:opts :body]))))))))
@@ -68,7 +69,7 @@
   (with-fake-http [(constantly true) "{}"]
     (let [resp (details (get-test :token "123" ::chan "chan"))]
       (testing "namespaced keywords allow for query-string kvs"
-        (is (= {:chan "chan" :circle-token "123"} (get-in resp [:opts :query-string])))))))
+        (is (= {:chan "chan" :circle-token "123"} (get-in resp [:opts :query-params])))))))
 
 (deftest request-fn-arguments
   (with-fake-http [(constantly true) "{}"]
@@ -76,7 +77,7 @@
       (is (= '([arg1 arg2 arg3 & options]) (:arglists (meta #'arg-test)))))
 
     (testing "type coercion"
-      (is (= "https://circleci.com/api/v1/foo/1/bar/two/baz/three/"
+      (is (= "https://circleci.com/api/v1/foo/1/bar/two/baz/three"
              (get-in (details (arg-test 1 :two "three" :token "123")) [:opts :url]))))))
 
 (deftest callbacks

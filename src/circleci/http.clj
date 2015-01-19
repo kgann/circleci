@@ -1,12 +1,13 @@
 (ns ^:no-doc circleci.http
   (:require [clojure.core.async :as async]
+            [clojure.string :as s]
             [clojure.tools.macro :refer [name-with-attributes]]
             [cheshire.core :refer [parse-string generate-string]]
             [org.httpkit.client :as http]))
 
 (def ^:dynamic *token* nil)
 (def ^:const reserved #{:http :chan :callback :token})
-(def ^:const base-uri "https://circleci.com/api/v1/")
+(def ^:const base-uri "https://circleci.com/api/v1")
 
 (defn- parse-body
   "Parse JSON response body and attach response details as metadata."
@@ -17,7 +18,7 @@
   "Given a collection of path segments, construct a valid URL"
   [segments]
   (let [segments (map #(if (keyword? %) (name %) (str %)) segments)]
-    (apply str base-uri (interleave segments (repeat \/)))))
+    (s/join \/ (conj segments base-uri))))
 
 (defn- http-options
   "Generate http-kit options. POST requests will send the body as JSON."
@@ -27,7 +28,7 @@
                   [(-> k name keyword) v]))]
     (if (= :post method)
       (assoc (:http opts) :body (generate-string query))
-      (assoc (:http opts) :query-string query))))
+      (assoc (:http opts) :query-params query))))
 
 (defn make-request
   [method segments {:keys [chan callback token] :or {token *token*} :as opts}]
@@ -35,7 +36,8 @@
   (let [request (partial http/request
                          (-> (http-options method opts)
                              (assoc :url (segments->url segments) :method method)
-                             (assoc-in [:query-string :circle-token] token)))]
+                             (assoc-in [:query-params :circle-token] token)
+                             (assoc-in [:headers "Accept"] "application/json")))]
     (cond
       chan (request #(async/put! chan (parse-body %)))
       callback (request (comp callback parse-body))

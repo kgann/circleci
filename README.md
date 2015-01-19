@@ -1,10 +1,19 @@
 # CircleCI
 
+[![Circle CI](https://circleci.com/gh/kgann/circleci/tree/master.svg?style=shield)](https://circleci.com/gh/kgann/circleci)
+
 A Clojure library for interacting with the [CircleCI REST API](https://circleci.com/docs/api)
 
 See the generated API documentation for all available namespaces and their fn's.
 
+## Installation
+
+Add the following dependency to your `project.clj` file for the latest release:
+
+    [circleci "0.1.0"]
+
 ## Documentaion
+
 * [API docs](http://kgann.github.io/circleci)
 * [Changelog](#changelog)
 
@@ -62,6 +71,18 @@ Optionally, you may omit `:token ...` from each request call if you either:
 ;; supply a temporary binding
 (ci/with-token "your token"
   (p/build ...))
+```
+
+## Testing
+
+There is a single integration test located at `test/circleci/integration_test.clj`. In order to have this test run, you must set the following environment variables:
+  * `CIRCLECI_TOKEN`
+  * `CIRCLECI_ORG`
+
+This will cause the integration test to run against your organization and token.
+
+```sh
+CIRCLECI_TOKEN=... CIRCLECI_ORG=... lein test circleci.integration-test
 ```
 
 ## Changelog
