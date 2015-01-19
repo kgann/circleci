@@ -56,9 +56,10 @@ Add the following dependency to your `project.clj` file for the latest release:
 (ci/details body)
 => {:opts {:method :get
            :url "..."
-           :query-string { ... }}
-           :status 200
+           :query-params { ... }
            :headers { ... }}
+    :status 200
+    :headers { ... }}
 ```
 
 
