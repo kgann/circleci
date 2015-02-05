@@ -88,7 +88,7 @@ CIRCLECI_TOKEN=... CIRCLECI_ORG=... lein test circleci.integration-test
 
 ## Changelog
 
-* v0.1.0 - intial release
+* v0.1.0 - initial release
 
 ## License
 
